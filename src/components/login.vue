@@ -15,7 +15,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <el-alert v-if='show' title="登录失败" type="error" center show-icon>
+    <el-alert v-if='show' :title="[errors]" type="error" center show-icon>
     </el-alert>
   </div>
 </template>
@@ -29,6 +29,7 @@
         username: '',
         password: '',
         show: false,
+        errors:"",
       }
     },
     methods: {
@@ -37,11 +38,18 @@
           username: this.username,
           password: this.password,
         };
-        this.$store.dispatch("login", logininfo)
+        this.$store.dispatch("login", logininfo);
+        console.log(this.$store.state.login.data.data);
+        if (this.$store.state.login.data.status !==400)
+            this.show=true;
+            this.errors=this.$store.state.login.data.data;
       }
     },
     mounted() {
       // console.log(this.$store.dispatch("login", 111))
+    },
+    computed:{
+
     }
   }
 </script>

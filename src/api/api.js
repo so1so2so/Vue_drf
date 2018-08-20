@@ -12,7 +12,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 const store = new Vuex.Store({
   state: {
     //这里的状态和每个组件的数据属性有关系(data)
-    login: {username:'', password: '',},
+    login: {},
   },
   mutations: {
     Login(state, data) {
@@ -29,7 +29,7 @@ const store = new Vuex.Store({
         }
       ).then(function (response) {
         //请求成功
-        console.log(response);
+        // console.log(response);
         context.commit('Login',response);
       }).catch(function (error) {
         //请求失败
