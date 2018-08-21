@@ -2,7 +2,7 @@
   <div class="login-bg">
     <div class="login">
       <el-form status-icon label-width="100px" class="demo-ruleForm">
-        <h1>123</h1>
+        <h1>CMDB后台管理</h1>
         <el-form-item label="帐号" prop="userName">
           <el-input type="text" v-model="username" placeholder="请输入用户名" auto-complete="off" clearable></el-input>
         </el-form-item>
@@ -21,7 +21,6 @@
 </template>
 
 <script>
-  import stord from '../api/api'
   export default {
     data() {
       return {
@@ -29,7 +28,7 @@
         username: '',
         password: '',
         show: false,
-        errors:"",
+        errors: '默认错误',
       }
     },
     methods: {
@@ -39,17 +38,22 @@
           password: this.password,
         };
         this.$store.dispatch("login", logininfo);
-        console.log(this.$store.state.login.data.data);
-        if (this.$store.state.login.data.status !==400)
-            this.show=true;
-            this.errors=this.$store.state.login.data.data;
-      }
-    },
+        this.show = true;
+        if(this.$store.state.login.sessionid !==null){
+           this.$router.push({name:'index',path:'/index'})
+      }},
+      // if (this.$store.state.login.data.status !==400){
+      //     this.show=true;
+      //     this.errors=this.$store.state.login.data.data;
+      // }
+
+      },
     mounted() {
       // console.log(this.$store.dispatch("login", 111))
+      console.log(this.$store.state.login.message);
+      console.log(typeof (this.$store.state.login.message));
     },
     computed:{
-
     }
   }
 </script>
@@ -62,7 +66,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background: #a1a1a1;
+    background: #f8f4ed;
   }
 
   .login-bg .login {
