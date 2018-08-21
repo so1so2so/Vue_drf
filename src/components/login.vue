@@ -7,15 +7,17 @@
           <el-input type="text" v-model="username" placeholder="请输入用户名" auto-complete="off" clearable></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="pass">
-          <el-input type="password" v-model="password" auto-complete="off"></el-input>
+          <el-input type="password" v-model="password" placeholder="请输入密码" auto-complete="off" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="chklogin">提交</el-button>
-          <el-button>重置</el-button>
+          <el-button type="primary" @click="chklogin" c="login_chose">提交</el-button>
+          <el-button @click="reset">重置</el-button>
+          <!--<el-button >{{get_status}}</el-button>-->
+
         </el-form-item>
       </el-form>
     </div>
-    <el-alert v-if='show' :title="[errors]" type="error" center show-icon>
+    <el-alert v-if='show' :title="get_status" type="error" center show-icon>
     </el-alert>
   </div>
 </template>
@@ -27,7 +29,7 @@
         url: '/login',
         username: '',
         password: '',
-        show: false,
+        show: null,
         errors: '默认错误',
       }
     },
@@ -38,23 +40,32 @@
           password: this.password,
         };
         this.$store.dispatch("login", logininfo);
-        this.show = true;
-        if(this.$store.state.login.sessionid !==null){
-           this.$router.push({name:'index',path:'/index'})
-      }},
-      // if (this.$store.state.login.data.status !==400){
-      //     this.show=true;
-      //     this.errors=this.$store.state.login.data.data;
-      // }
-
+        // this.$store.commit('Login',logininfo)
+        this.show=true
+        if(this.get_status){
+            this.$router.push({path:'/index'})
+        }
       },
-    mounted() {
-      // console.log(this.$store.dispatch("login", 111))
-      console.log(this.$store.state.login.message);
-      console.log(typeof (this.$store.state.login.message));
-    },
-    computed:{
+    reset() {
+      this.show = false;
+      this.username = null;
+      this.password = null;
     }
+  }
+  ,
+  mounted()
+  {
+    //页面加载后
+    // console.log(this.$store.dispatch("login", 111))
+    // console.log(this.$store.state.login.message);
+    // console.log(typeof (this.$store.state.login.message));
+  }
+  ,
+  computed:{
+      get_status(){
+      return this.$store.state.login.message
+      }
+  }
   }
 </script>
 
