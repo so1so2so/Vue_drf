@@ -1,5 +1,4 @@
 <template>
-
   <el-container style="height: 500px; border: 1px solid #eee">
     <!--<h1 v-for="(item,index) in tabeldate">-->
     <!--<li>{{item.assign}}</li></h1>-->
@@ -66,7 +65,7 @@
         <span @click="test">王小虎</span>
       </el-header>
       <el-main>
-        <el-table :data="tableData" height="250" border style="width: 100%">
+        <el-table :data="[getserver]" height="250" border style="width: 100%">
           <el-table-column prop="asset" label="所属" width="180"></el-table-column>
           <el-table-column prop="created_by" label="创建方式" width="180"></el-table-column>
           <el-table-column prop="hosted_on" label="挂载" width="180"></el-table-column>
@@ -85,25 +84,28 @@
 </template>
 
 <script>
+    import {mapGetters, mapActions} from 'vuex'
   export default {
     name: "index",
     data() {
       return {
-        tableData: this.$store.state.serverinfo
+        tableData: getserver
         // tableData: ""
 
       }
     },
     methods:{
-      test(){
-        var talles=this.$store.state.serverinfo;
-        console.log(talles)
-          // console.log(talles);
-          // console.log(typeof (talles))
-      }
+      ... mapActions(['getserver']),
+      // test(){
+      //   var talles=this.$store.state.serverinfo;
+      //   console.log(talles)
+      //     // console.log(talles);
+      //     // console.log(typeof (talles))
+      // }
     },
     mounted() {
-      this.$store.dispatch("getserver");
+
+      // this.$store.dispatch("getserver");
       // console.log(this.$store.state.serverinfo)
     },
   }

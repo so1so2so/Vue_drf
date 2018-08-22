@@ -10,7 +10,7 @@
           <el-input type="password" v-model="password" placeholder="请输入密码" auto-complete="off" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="chklogin" c="login_chose">提交</el-button>
+          <el-button type="primary" @click="login" c="login_chose">提交</el-button>
           <el-button @click="reset">重置</el-button>
           <!--<el-button >{{get_status}}</el-button>-->
 
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+  import {mapActions} from 'vuex'
+
   export default {
     data() {
       return {
@@ -34,38 +36,44 @@
       }
     },
     methods: {
-      chklogin() {
+      login() {
         var logininfo = {
           username: this.username,
           password: this.password,
         };
         this.$store.dispatch("login", logininfo);
+      // ...
+      //   mapActions(['login_fun'])
+      //   login_fun()
+      //   {
+      //     this.$store.dispatch('login', logininfo);
+      //   }
         // this.$store.commit('Login',logininfo)
-        this.show=true
-        if(this.get_status){
-            this.$router.push({path:'/index'})
-        }
+        // this.show=true;
+        // console.log(this.$store.state.login.message)
+        // if(this.get_status){
+        //     this.$router.push({path:'/index'})
+        // }
       },
-    reset() {
-      this.show = false;
-      this.username = null;
-      this.password = null;
-    }
-  }
-  ,
-  mounted()
-  {
-    //页面加载后
-    // console.log(this.$store.dispatch("login", 111))
-    // console.log(this.$store.state.login.message);
-    // console.log(typeof (this.$store.state.login.message));
-  }
-  ,
-  computed:{
-      get_status(){
-      return this.$store.state.login.message
+      reset() {
+        this.show = false;
+        this.username = null;
+        this.password = null;
       }
-  }
+    }
+    ,
+    mounted() {
+      //页面加载后
+      // console.log(this.$store.dispatch("login", 111))
+      // console.log(this.$store.state.login.message);
+      // console.log(typeof (this.$store.state.login.message));
+    }
+    ,
+    computed: {
+      get_status() {
+        return this.$store.state.login.message
+      }
+    }
   }
 </script>
 

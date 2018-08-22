@@ -84,7 +84,7 @@ const store = new Vuex.Store({
           method: 'get',
         }
       ).then(function (response) {
-        console.log(response.data);
+        // console.log(response.data);
         context.commit('Getserver', response)
       }).catch(function (error) {
         //请求失败

@@ -2,14 +2,15 @@
   <div id="app">
     <router-view></router-view>
     <!--<Login></Login>-->
+    <example></example>
   </div>
 </template>
 
 <script>
-  import Login from '@/components/login'
+  import example from '@/components/Example_for_vuex'
 export default {
   name: 'App',
-  components: {Login}
+  components: {example}
 }
 </script>
 
