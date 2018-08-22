@@ -62,21 +62,28 @@
             <el-dropdown-item>删除</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <span @click="test">王小虎</span>
+        <span >王小虎</span>
       </el-header>
       <el-main>
-        <el-table :data="[getserver]" height="250" border style="width: 100%">
+        <el-table ref="multipleTable" tooltip-effect="dark" :data="getservers" height="250" border style="width: 100%"
+                  @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="180"></el-table-column>
+           <!--<template slot-scope="scope">{{ scope.row.date }}</template>-->
           <el-table-column prop="asset" label="所属" width="180"></el-table-column>
           <el-table-column prop="created_by" label="创建方式" width="180"></el-table-column>
           <el-table-column prop="hosted_on" label="挂载" width="180"></el-table-column>
           <el-table-column prop="id" label="id" width="180"></el-table-column>
-          <el-table-column prop="model" label="服务器类型" ></el-table-column>
+          <el-table-column prop="model" label="服务器型号"></el-table-column>
           <el-table-column prop="os_distribution" label="操作系统"></el-table-column>
           <el-table-column prop="os_release" label="系统版本"></el-table-column>
           <el-table-column prop="os_type" label="系统类型"></el-table-column>
           <el-table-column prop="raid_type" label="Raid"></el-table-column>
-          <el-table-column prop="sub_asset_type" label="服务地址"></el-table-column>
+          <el-table-column prop="sub_asset_type" label="服务类型"></el-table-column>
         </el-table>
+        <div style="margin-top: 20px">
+          <el-button @click="toggleSelection([tableData3[1], tableData3[2]])">切换第二、第三行的选中状态</el-button>
+          <el-button @click="toggleSelection()">取消选择</el-button>
+        </div>
       </el-main>
     </el-container>
   </el-container>
@@ -84,30 +91,48 @@
 </template>
 
 <script>
-    import {mapGetters, mapActions} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
+
   export default {
     name: "index",
     data() {
       return {
-        tableData: getserver
-        // tableData: ""
-
+        // show: this.$store.state.serverinfo
+        // show:this.get_date()
+        // tableData: [],
+         multipleSelection: []
       }
     },
-    methods:{
-      ... mapActions(['getserver']),
-      // test(){
-      //   var talles=this.$store.state.serverinfo;
-      //   console.log(talles)
-      //     // console.log(talles);
-      //     // console.log(typeof (talles))
-      // }
+    methods: {
+      //相当于一个函数 函数名称叫做getserver如果有参数可以加
+      ...mapActions(['getserver',]),
+      // test222() {
+      //   console.log(this.tableData)
+      // },
+      toggleSelection(rows) {
+        if (rows) {
+          rows.forEach(row => {
+            this.$refs.multipleTable.toggleRowSelection(row);
+          });
+        } else {
+          this.$refs.multipleTable.clearSelection();
+        }
+      },
+      handleSelectionChange(val) {
+        this.multipleSelection = val;
+      }
     },
+    computed: {
+      ... mapGetters(['getservers']),
+      // 上面这等同于下面的get_date
+      get_date() {
+        return this.$store.state.serverinfo
+      }
+    }
+    ,
     mounted() {
-
-      // this.$store.dispatch("getserver");
-      // console.log(this.$store.state.serverinfo)
-    },
+      this.getserver();
+    }
   }
 </script>
 

@@ -10,50 +10,46 @@
           <el-input type="password" v-model="password" placeholder="请输入密码" auto-complete="off" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="login" c="login_chose">提交</el-button>
+          <el-button type="primary" @click="login_a" c="login_chose">提交</el-button>
           <el-button @click="reset">重置</el-button>
           <!--<el-button >{{get_status}}</el-button>-->
 
         </el-form-item>
       </el-form>
     </div>
-    <el-alert v-if='show' :title="get_status" type="error" center show-icon>
+    <el-alert v-if='show' :title="getloginmessage" type="error" center show-icon>
     </el-alert>
   </div>
 </template>
 
 <script>
-  import {mapActions} from 'vuex'
-
+  import {mapActions, mapGetters} from 'vuex'
+  import Cookie from 'vue-cookies'
   export default {
     data() {
       return {
         url: '/login',
         username: '',
         password: '',
-        show: null,
+        show: false,
         errors: '默认错误',
       }
     },
     methods: {
-      login() {
+      ...mapActions(['login']),
+      login_a() {
         var logininfo = {
           username: this.username,
           password: this.password,
         };
-        this.$store.dispatch("login", logininfo);
-      // ...
-      //   mapActions(['login_fun'])
-      //   login_fun()
-      //   {
-      //     this.$store.dispatch('login', logininfo);
-      //   }
-        // this.$store.commit('Login',logininfo)
-        // this.show=true;
-        // console.log(this.$store.state.login.message)
-        // if(this.get_status){
-        //     this.$router.push({path:'/index'})
-        // }
+        this.login(logininfo);
+        // console.log(this.getloginstatus)
+        if (this.getlogincode===200) {
+          this.$router.push({path: '/index'})
+        }
+        else {
+          this.show=true;
+        }
       },
       reset() {
         this.show = false;
@@ -63,6 +59,9 @@
     }
     ,
     mounted() {
+      if(Cookie.get("sessionid")){
+         this.$router.push({path: '/index'})
+      }
       //页面加载后
       // console.log(this.$store.dispatch("login", 111))
       // console.log(this.$store.state.login.message);
@@ -70,9 +69,10 @@
     }
     ,
     computed: {
-      get_status() {
-        return this.$store.state.login.message
-      }
+      ... mapGetters(['getloginmessage', 'getlogincode']),
+      // get_status() {
+      //   return this.$store.state.login.message
+      // }
     }
   }
 </script>

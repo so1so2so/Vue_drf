@@ -17,19 +17,20 @@ const store = new Vuex.Store({
     login: {
       username: Cookie.get("username"),
       sessionid: Cookie.get("sessionid"),
-      message: null,
+      message: '',
+      code:null,
     },
     serverinfo:[{
-      asset: 1,
+      asset: '',
       created_by: "",
-      hosted_on: null,
-      id: 1,
+      hosted_on: "",
+      id: '',
       model: "",
       os_distribution: "",
-      os_release: null,
+      os_release: "",
       os_type: "",
-      raid_type: "无",
-      sub_asset_type: 0,
+      raid_type: "111",
+      sub_asset_type: '222',
     }]
   },
   mutations: {
@@ -37,13 +38,25 @@ const store = new Vuex.Store({
       state.login.username = data.username;
       state.login.sessionid = data.sessionid;
       state.login.message = data.message;
+      state.login.code = data.code;
 
       Cookie.set("username", data.username, "20min");
       Cookie.set("sessionid", data.sessionid, "20min")
 
     },
     Getserver(state, data) {
-      state.serverinfo = data.data
+      state.serverinfo = data.data.results
+    }
+  },
+  getters:{
+    getservers(state){
+      return state.serverinfo
+    },
+    getloginmessage(state){
+      return state.login.message
+    },
+    getlogincode(state){
+      return state.login.code
     }
   },
   actions: {
@@ -59,14 +72,16 @@ const store = new Vuex.Store({
           context.commit('Login', {
             username: return_data.username,
             sessionid: response.data.session_key,
-            message: response.data.message
+            message: response.data.message,
+            code:response.data.code,
           });
         }
         else {
           context.commit('Login', {
             username: return_data.username,
             sessionid: response.data.session_key,
-            message: response.data.message
+            message: response.data.message,
+             code:response.data.code,
           });
         }
 
@@ -80,7 +95,7 @@ const store = new Vuex.Store({
     },
     getserver(context) {
       axios.request({
-          url: '/api/v1/GetServer/1/',
+          url: '/api/v1/GetServer/',
           method: 'get',
         }
       ).then(function (response) {
