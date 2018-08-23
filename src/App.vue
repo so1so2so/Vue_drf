@@ -1,5 +1,6 @@
 <template>
-  <div id="app">
+  <div >
+    <heads></heads>
     <router-view></router-view>
     <!--<Login></Login>-->
     <!--<example></example>-->
@@ -8,13 +9,18 @@
 
 <script>
   import example from '@/components/Example_for_vuex'
+  import heads from '@/components/heads'
 export default {
   name: 'App',
-  components: {example}
+  components: {
+    example,
+    heads,
+  }
 }
 </script>
 
 <style>
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

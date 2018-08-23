@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Login from '@/components/login'
 import index from '@/components/index'
 import exam from '@/components/Example_for_vuex'
+
 Vue.use(Router);
 
 export default new Router({
@@ -15,7 +16,18 @@ export default new Router({
     {
       path: '/index',
       name: 'index',
-      component: index
+      component: index,
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/get_svc/:id',
+      name: 'get_svc',
+      component: index,
+      meta: {
+        requireAuth: true
+      }
     },
     {
       path: '/exam',

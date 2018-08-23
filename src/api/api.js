@@ -7,7 +7,7 @@ Vue.use(Vuex);
 // Vue.use(axios);
 Vue.prototype.$http = axios;
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000';
+axios.defaults.baseURL = 'http://127.0.0.1:8000/api/v1';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
@@ -16,9 +16,7 @@ const store = new Vuex.Store({
     //这里的状态和每个组件的数据属性有关系(data)
     login: {
       username: Cookie.get("username"),
-      sessionid: Cookie.get("sessionid"),
-      message: '',
-      code:null,
+      token: Cookie.get("token"),
     },
     serverinfo:[{
       asset: '',
@@ -35,68 +33,43 @@ const store = new Vuex.Store({
   },
   mutations: {
     Login(state, data) {
-      state.login.username = data.username;
-      state.login.sessionid = data.sessionid;
-      state.login.message = data.message;
-      state.login.code = data.code;
-
-      Cookie.set("username", data.username, "20min");
-      Cookie.set("sessionid", data.sessionid, "20min")
-
+      state.login = data;
     },
     Getserver(state, data) {
       state.serverinfo = data.data.results
+    },
+    Logout(state){
+      state.login.username = null;
+      state.login.token = null
     }
   },
   getters:{
     getservers(state){
       return state.serverinfo
     },
-    getloginmessage(state){
-      return state.login.message
+    getuser(state){
+      return state.login.username
     },
-    getlogincode(state){
-      return state.login.code
-    }
   },
   actions: {
     login(context, return_data) {
-      axios.request({
-          url: '/login/',
-          method: 'post',
-          data: return_data,
-        }
-      ).then(function (response) {
-        // console.log(response);
-        if (response.data.code === 200) {
-          context.commit('Login', {
-            username: return_data.username,
-            sessionid: response.data.session_key,
-            message: response.data.message,
-            code:response.data.code,
-          });
-        }
-        else {
-          context.commit('Login', {
-            username: return_data.username,
-            sessionid: response.data.session_key,
-            message: response.data.message,
-             code:response.data.code,
-          });
-        }
-
-      }).catch(function (error) {
-        //请求失败
-        console.log(error)
-      })
+      Cookie.set("username", return_data.username, "20min");
+      Cookie.set("token", return_data.token, "20min");
+      context.commit('Login', return_data)
     },
-    login_out(context, return_data) {
+    login_out(context) {
+      Cookie.remove('username');
+      Cookie.remove('token');
+      context.commit('Logout')
 
     },
     getserver(context) {
       axios.request({
-          url: '/api/v1/GetServer/',
+          url: '/GetServer/',
           method: 'get',
+          params:{
+            token: this.state.login.token
+          }
         }
       ).then(function (response) {
         // console.log(response.data);
@@ -105,7 +78,7 @@ const store = new Vuex.Store({
         //请求失败
         console.log(error)
       })
-    }
+    },
   }
 });
 export default store

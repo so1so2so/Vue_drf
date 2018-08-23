@@ -2,7 +2,7 @@
   <div class="login-bg">
     <div class="login">
       <el-form status-icon label-width="100px" class="demo-ruleForm">
-        <h1>CMDB后台管理</h1>
+              <h1 >CMDB后台管理</h1>
         <el-form-item label="帐号" prop="userName">
           <el-input type="text" v-model="username" placeholder="请输入用户名" auto-complete="off" clearable></el-input>
         </el-form-item>
@@ -10,14 +10,14 @@
           <el-input type="password" v-model="password" placeholder="请输入密码" auto-complete="off" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="login_a" c="login_chose">提交</el-button>
+          <el-button type="primary" @click="login_a">提交</el-button>
           <el-button @click="reset">重置</el-button>
           <!--<el-button >{{get_status}}</el-button>-->
 
         </el-form-item>
       </el-form>
     </div>
-    <el-alert v-if='show' :title="getloginmessage" type="error" center show-icon>
+    <el-alert v-if='show' :title="errors" type="error" center show-icon>
     </el-alert>
   </div>
 </template>
@@ -25,12 +25,13 @@
 <script>
   import {mapActions, mapGetters} from 'vuex'
   import Cookie from 'vue-cookies'
+  import axios from 'axios'
   export default {
     data() {
       return {
         url: '/login',
-        username: '',
-        password: '',
+        username: null,
+        password: null,
         show: false,
         errors: '默认错误',
       }
@@ -42,14 +43,39 @@
           username: this.username,
           password: this.password,
         };
-        this.login(logininfo);
-        // console.log(this.getloginstatus)
-        if (this.getlogincode===200) {
-          this.$router.push({path: '/index'})
-        }
-        else {
-          this.show=true;
-        }
+        // if(this.username===null || this.password===null)
+        //   this.show=true;
+        //   this.errors="请输入用户名密码";
+        var that = this;
+        axios.request({
+            url: '/auth/',
+            method: 'post',
+            data: logininfo,
+          }
+        ).then(function (response) {
+          // console.log(response.data.code);
+
+          if (response.data.code === 200) {
+            //提交mapActions定义 display
+            that.login({username:logininfo.username,token:response.data.token});
+            var url = that.$route.query.backUrl;
+             if(url){
+                that.$router.push({path:url})
+             }
+             else {
+               that.$router.push({path: '/index'})
+             }
+          }
+          else {
+            that.show = true;
+            that.errors =response.data.message
+          }
+        }).catch(function (error) {
+          //请求失败
+          console.log(error);
+          that.show = true;
+          that.errors = "请求失败"
+        })
       },
       reset() {
         this.show = false;
@@ -59,20 +85,14 @@
     }
     ,
     mounted() {
-      if(Cookie.get("sessionid")){
-         this.$router.push({path: '/index'})
+      if (Cookie.get("token")) {
+
+        this.$router.push({path: '/index'})
       }
-      //页面加载后
-      // console.log(this.$store.dispatch("login", 111))
-      // console.log(this.$store.state.login.message);
-      // console.log(typeof (this.$store.state.login.message));
     }
     ,
     computed: {
       ... mapGetters(['getloginmessage', 'getlogincode']),
-      // get_status() {
-      //   return this.$store.state.login.message
-      // }
     }
   }
 </script>
